@@ -76,6 +76,7 @@ defmodule Bugsnag.Payload do
   defp add_metadata(event, metadata), do: Map.put(event, :metaData, metadata)
 
   defp format_stacktrace(stacktrace) do
+    IO.puts(stacktrace |> inspect)
     Enum.map stacktrace, fn
       ({ module, function, args, [] }) ->
         %{
@@ -91,6 +92,12 @@ defmodule Bugsnag.Payload do
           inProject: Regex.match?(~r/^(lib|web)/, file),
           method: Exception.format_mfa(module, function, args),
           code: get_file_contents(file, line_number)
+        }
+       _ ->
+        %{
+          file: "unknown",
+          line_number: 0,
+          method: "unknown.exception"
         }
     end
   end
